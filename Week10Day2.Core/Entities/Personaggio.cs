@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Week10Day2.Core.Entities
 {
-    public class Personaggio
+    public abstract class Personaggio
     {
         public int Id { get; set; }
         public string Nome { get; set; }
