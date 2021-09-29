@@ -11,14 +11,31 @@ namespace Week10Day2.MockRepository
     public class EroiRepository : IEroeRepository
     {
         public static List<Eroe> eroi = new List<Eroe>();
+
+        public string Delete(Eroe eroe)
+        {
+            eroi.Remove(eroe);
+            return "Eroe eliminato con successo.";
+        }
+
         public List<Eroe> FetchByUtente(Utente u)
         {
             return eroi.Where(e => e.IdGiocatore == u.Id).ToList();
         }
 
-        public Eroe Insert(Eroe item)
+        public Eroe Insert(Eroe eroe)
         {
-            throw new NotImplementedException();
+            if (eroi.Count() == 0)
+            {
+                eroe.Id = 1;
+            }
+            else
+            {
+                eroe.Id = eroi.Max(i => i.Id) + 1;
+            }
+            eroi.Add(eroe);
+            return eroe;
+
         }
     }
 }

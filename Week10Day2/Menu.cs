@@ -12,7 +12,7 @@ namespace Week10Day2
     public class Menu
     {
         private static readonly IBusinessLayer bl = new BusinessLayer(new UtentiRepository(), new EroiRepository(),
-                                                                       new MostriRepository());
+                                                                       new MostriRepository(), new CategoriaRepository(), new ArmaRepository());
         internal static void Start()
         {
             bool continuare = true;
@@ -51,6 +51,7 @@ namespace Week10Day2
                 if (u != null)
                 {
                     MenuGiocatore(u);
+                    continuare = false;
                 }
             } while (continuare);
         }
@@ -59,7 +60,7 @@ namespace Week10Day2
         {
             if (u.isAdmin)
             {
-                MenuAdmin(u);
+                //MenuAdmin(u);
             }
             else
             {
@@ -73,11 +74,12 @@ namespace Week10Day2
 
             do
             {
+                Console.WriteLine();
                 Console.WriteLine("############# MENU GIOCATORE ################");
                 Console.WriteLine("Selezionare un operazione da eseguire:");
                 Console.WriteLine("1 - Gioca");
                 Console.WriteLine("2 - Crea nuovo eroe");
-                Console.WriteLine("2 - Elimina eroe");
+                Console.WriteLine("3 - Elimina eroe");
                 Console.WriteLine("0 - Esci");
                 Console.WriteLine("#############################################");
 
@@ -87,7 +89,7 @@ namespace Week10Day2
                 switch (scelta)
                 {
                     case "1":
-                        Gioca(u);
+                        //Gioca(u);
                         break;
                     case "2":
                         CreaEroe(u);
@@ -96,7 +98,7 @@ namespace Week10Day2
                         EliminaEroe(u);
                         break;
                     case "0":
-                        Console.WriteLine("Arrivederci. A presto!");
+                        Console.WriteLine("Ciao alla prossima partita!");
                         continuare = false;
                         break;
                     default:
@@ -106,34 +108,136 @@ namespace Week10Day2
             } while (continuare);
         }
         #region MENU-GIOCATORE
-        private static void EliminaEroe(Utente u)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void CreaEroe(Utente u)
-        {
-            throw new NotImplementedException();
-        }
-
 
         //pending GIOCA
         private static void Gioca(Utente u)
         {
             List<Eroe> eroi = bl.FetchEroi(u);
-            foreach(var e in eroi)
+            int i = 1;
+            foreach (var e in eroi)
             {
-                Console.WriteLine(e.Id + " - " + e.Nome + e._Categoria);
+                Console.WriteLine($"{i} - {e.Print()}");
+                i++;
             }
-            Console.WriteLine("Quale eroe vuoi scegliere? Inserisci l'Id.");
+            Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
             int sceltaEroe = int.Parse(Console.ReadLine());
+            
         }
+        private static void EliminaEroe(Utente u)
+        {
+            try
+            {   
+                List<Eroe> eroi = bl.FetchEroi(u);
+                if (eroi != null)
+                {
+                    int i = 1;
+                    foreach (var e in eroi)
+                    {
+                        Console.WriteLine($"{i} - {e.Print()}");
+                        i++;
+                    }
+                    int sceltaEroe;
+                    bool isInt;
+                    do
+                    {
+                        Console.WriteLine("Quale eroe vuoi eliminare? Inserisci il numero.");
+                        isInt = int.TryParse(Console.ReadLine(), out sceltaEroe);
+                    } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
+                    Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
+                    Console.WriteLine(bl.EliminaEroe(eroe));
+                }
+                else
+                {
+                    Console.WriteLine("Non hai nessun eroe nell'account. Creane uno.");
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static void CreaEroe(Utente u)
+        {
+            try
+            {
+                Eroe nuovoEroe = new Eroe();
+                nuovoEroe.Nome = InserisciNome();
+                nuovoEroe._Categoria = InserisciCategoria();
+                nuovoEroe._Arma = InserisciArma(nuovoEroe._Categoria);
+                nuovoEroe.IdGiocatore = u.Id;
+                if (bl.InsertEroe(nuovoEroe).Id != 0)
+                {
+                    Console.WriteLine($"L'eroe {nuovoEroe.Nome} è stato inserito correttamente");
+                }
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
+
+
+        }
+
+        private static Arma InserisciArma(Categoria categoria)
+        {
+            List<Arma> armi = bl.FetchArma(categoria);
+            int i = 1;
+            foreach (var a in armi)
+            {
+                Console.WriteLine($"{i} - {a.Print()}");
+                i++;
+            }
+            int armaScelta;
+            bool isInt;
+            do
+            {
+                Console.WriteLine("Quale arma vuoi selezionare? Inserisci il numero");
+                isInt = int.TryParse(Console.ReadLine(), out armaScelta);
+            } while (!isInt || armaScelta > armi.Count() || armaScelta <= 0);
+            Arma arma = armi.ElementAt(armaScelta - 1);
+            return arma;
+        }
+
+        private static Categoria InserisciCategoria()
+        {
+
+            List<Categoria> categorie = bl.FetchCategoria("Eroe");
+            int i = 1;
+            foreach(var c in categorie)
+            {
+                Console.WriteLine(i + " - " + c.Nome);
+                i++;
+            }
+            int categoriaScelta;
+            bool isInt;
+            do
+            {
+                Console.WriteLine("Quale eroe vuoi selezionare? Inserisci il numero");
+                isInt = int.TryParse(Console.ReadLine(), out categoriaScelta);
+            } while (!isInt || categoriaScelta > categorie.Count() || categoriaScelta <= 0);
+            Categoria categoria = categorie.ElementAt(categoriaScelta - 1);
+            return categoria;
+        }
+
+        private static string InserisciNome()
+        {
+            string nome = String.Empty;
+            do
+            {
+                Console.WriteLine("Inserisci nome eroe: ");
+                nome = Console.ReadLine();
+
+            } while (String.IsNullOrEmpty(nome));
+            return nome;
+        }
+
+
 
         #endregion
         #region MENU
         private static Utente Registrati()
         {
-            Utente user;
+            Utente user = new Utente();
             string username;
             string password;
             try
@@ -144,9 +248,16 @@ namespace Week10Day2
                     password = InserisciPassword();
                     user = bl.GetUtente(username);
                 } while (user != null);
-                user.Password = password;
-                user = bl.InsertUser(user);
-                Console.WriteLine("Registrazione avvenuta con successo.");
+                user = new Utente(username, password);
+                if (bl.InsertUser(user) != null)
+                {
+                    Console.WriteLine("Registrazione avvenuta con successo.");
+                }
+                else
+                {
+                    Console.WriteLine("Errore nella fase di registrazione. Riprova.");
+                }
+
                 return user;
             } catch (Exception ex)
             {

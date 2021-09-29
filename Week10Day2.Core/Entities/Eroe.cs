@@ -11,6 +11,9 @@ namespace Week10Day2.Core.Entities
         public int PuntiAccumulati { get; set; }
         public int IdGiocatore { get; set; }
 
-
+        public string Print()
+        {
+            return $" {base.Print()}Punti accumulati: {PuntiAccumulati} \n";
+        }
     }
 }

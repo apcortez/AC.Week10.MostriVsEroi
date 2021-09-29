@@ -14,6 +14,11 @@ namespace Week10Day2.Core.Entities
         public int PuntiVita { get; set; }
         public Categoria _Categoria { get; set; }
         public Arma _Arma { get; set; }
+
+        public string Print()
+        {
+            return $"{Nome}\nLivello: {Livello}\nJob:{_Categoria.Nome} \nHP:{PuntiVita} \nArma: {_Arma.Nome}\n";
+        }
     }
     
     public struct Categoria

@@ -12,6 +12,11 @@ namespace Week10Day2.Core.Entities
         public string Nome { get; set; }
         public int puntiDanno { get; set; }
 
-        public Categoria _Categoria{ get; set; }
+        public int IdCategoria { get; set; }
+        
+        public string Print()
+        {
+            return $"{Nome} - Danno: {puntiDanno}";
+        }
     }
 }

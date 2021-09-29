@@ -9,9 +9,25 @@ namespace Week10Day2.Core
 {
     public interface IBusinessLayer
     {
+        #region IUtente
         Utente GetUtente(string username);
         Utente AccediUtente(string username, string password);
         Utente InsertUser(Utente user);
+        #endregion
+
+        #region IEroi
         List<Eroe> FetchEroi(Utente u);
+        Eroe InsertEroe(Eroe nuovoEroe);
+        List<Categoria> FetchCategoria(string discriminator);
+        List<Arma> FetchArma(Categoria categoria);
+        string EliminaEroe(Eroe eroe);
+
+
+
+
+        #endregion
+
+
+
     }
 }
