@@ -5,4 +5,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Week10Day2.Core\Week10Day2.Core.csproj" />
+    <ProjectReference Include="..\Week10Day2.MockRepository\Week10Day2.MockRepository.csproj" />
+  </ItemGroup>
+
 </Project>

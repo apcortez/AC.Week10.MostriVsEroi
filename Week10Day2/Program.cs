@@ -6,7 +6,7 @@ namespace Week10Day2
     {
         static void Main(string[] args)
         {
-          
+            Menu.Start();
         }
     }
 }

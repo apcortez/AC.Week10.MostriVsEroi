@@ -8,5 +8,6 @@ namespace Week10Day2.Core.Interfaces
 {
     public interface IRepository<T>
     {
+        T Insert(T item);
     }
 }

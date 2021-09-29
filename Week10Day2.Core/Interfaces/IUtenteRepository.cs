@@ -9,5 +9,7 @@ namespace Week10Day2.Core.Interfaces
 {
     public interface IUtenteRepository : IRepository<Utente>
     {
+        Utente GetByUsername(string username);
+        Utente GetByUserPass(string username, string password);
     }
 }

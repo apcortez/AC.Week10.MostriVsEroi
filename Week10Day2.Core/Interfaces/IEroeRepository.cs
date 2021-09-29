@@ -7,7 +7,8 @@ using Week10Day2.Core.Entities;
 
 namespace Week10Day2.Core.Interfaces
 {
-    public interface IEroeRepository: IRepository<Eroe>
+    public interface IEroeRepository : IRepository<Eroe>
     {
+        List<Eroe> FetchByUtente(Utente u);
     }
 }
