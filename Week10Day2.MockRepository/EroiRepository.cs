@@ -37,5 +37,15 @@ namespace Week10Day2.MockRepository
             return eroe;
 
         }
+
+        public void Update(Eroe eroe)
+        {
+            Eroe eroeDaCancellare = eroi.Where(e => e.Id == eroe.Id).FirstOrDefault();
+            if(eroeDaCancellare != null)
+            {
+                eroi.Remove(eroeDaCancellare);
+                eroi.Add(eroe);
+            } 
+        }
     }
 }

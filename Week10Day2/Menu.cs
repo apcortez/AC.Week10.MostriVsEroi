@@ -135,6 +135,8 @@ namespace Week10Day2
                     if (risultato)
                     {
                         Console.WriteLine("Hai vinto");
+                        eroe.PuntiAccumulati += mostro.Livello * 10;
+                        bl.UpdateEroe(eroe);
                     }
                     else
                     {
@@ -159,6 +161,10 @@ namespace Week10Day2
             do
             {
                 mostro.PuntiVita = TurnoEroe(eroe, mostro);
+                if(mostro.PuntiVita <= 0)
+                {
+                    break;
+                }
                 eroe.PuntiVita = TurnoMostro(eroe, mostro);
             } while (eroe.PuntiVita > 0 || mostro.PuntiVita > 0);
             if (eroe.PuntiVita <= 0 && mostro.PuntiVita > 0)
@@ -170,24 +176,29 @@ namespace Week10Day2
             }
         private static int TurnoMostro(Eroe eroe, Mostro mostro)
         {
+            Console.WriteLine($"E' il turno di {mostro.Nome}");
             eroe.PuntiVita -= mostro._Arma.puntiDanno;
+            Console.WriteLine($"Il mostro ti ha inflitto {eroe._Arma.puntiDanno} danni");
+            Console.WriteLine($"Tu ha ora {mostro.PuntiVita} hp\n");
             return eroe.PuntiVita;
         }
 
         private static int TurnoEroe(Eroe eroe, Mostro mostro)
         {
+            Console.WriteLine("E' il tuo turno. Cosa vuoi fare?");
             Console.WriteLine("1 - Attacca! ");
             Console.WriteLine("2 - Tenta la fuga");
             string scelta;
             do
             {
                 scelta = Console.ReadLine();
-            } while (scelta != "1" || scelta != "2");
+            } while (scelta != "1" && scelta != "2");
             switch (scelta)
             {
                 case "1":
                     mostro.PuntiVita -= eroe._Arma.puntiDanno;
-                    
+                    Console.WriteLine($"Hai inflitto al mostro {eroe._Arma.puntiDanno} danni");
+                    Console.WriteLine($"Il mostro ha ora {mostro.PuntiVita} hp\n");
                     break;
                 case "2":
                     //Fuga(eroe);

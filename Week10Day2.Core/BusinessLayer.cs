@@ -33,6 +33,11 @@ namespace Week10Day2.Core
         {
             return categoriaRepo.Fetch(discriminator);
         }
+        public void UpdateEroe(Eroe eroe)
+        {
+            eroeRepo.Update(eroe);
+        }
+
 
         public Eroe InsertEroe(Eroe nuovoEroe)
         {
@@ -79,6 +84,7 @@ namespace Week10Day2.Core
 
         }
 
+      
         #endregion
     }
 }
