@@ -13,6 +13,7 @@ namespace Week10Day2
     {
         private static readonly IBusinessLayer bl = new BusinessLayer(new UtentiRepository(), new EroiRepository(),
                                                                        new MostriRepository(), new CategoriaRepository(), new ArmaRepository());
+        #region MENU PRINCIPALE
         internal static void Start()
         {
             bool continuare = true;
@@ -55,7 +56,8 @@ namespace Week10Day2
                 }
             } while (continuare);
         }
-
+        
+        
         private static void MenuGiocatore(Utente u)
         {
             if (u.isAdmin)
@@ -67,7 +69,8 @@ namespace Week10Day2
                 MenuNonAdmin(u);
             }
         }
-
+        #endregion
+        #region MENU NORMALE
         private static void MenuNonAdmin(Utente u)
         {
             bool continuare = true;
@@ -107,8 +110,9 @@ namespace Week10Day2
                 }
             } while (continuare);
         }
-        #region MENU-GIOCATORE
+        #endregion
 
+        #region MENU NORMALE METODI
         private static void Gioca(Utente u)
         {
             try
@@ -315,10 +319,10 @@ namespace Week10Day2
             return nome;
         }
 
-
-
         #endregion
-        #region MENU
+
+
+        #region MENU PRINCIPALE METODI
         private static Utente Registrati()
         {
             Utente user = new Utente();
