@@ -21,11 +21,15 @@ namespace Week10Day2.Core
         List<Categoria> FetchCategoria(string discriminator);
         List<Arma> FetchArma(Categoria categoria);
         string EliminaEroe(Eroe eroe);
-
-
-
-
         #endregion
+        #region IMostri
+        Mostro GetRandomMostro(int livello);
+        
+        #endregion
+
+
+
+
 
 
 

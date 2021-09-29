@@ -7,7 +7,8 @@ using Week10Day2.Core.Entities;
 
 namespace Week10Day2.Core.Interfaces
 {
-    public interface IMostroRepository :IRepository<Mostro>
+    public interface IMostroRepository : IRepository<Mostro>
     {
+        List<Mostro> FetchByLivello(int livello);
     }
 }

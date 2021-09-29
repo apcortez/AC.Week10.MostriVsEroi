@@ -23,6 +23,7 @@ namespace Week10Day2.Core
 
         }
 
+        #region Eroe
 
         public List<Arma> FetchArma(Categoria categoria)
         {
@@ -49,7 +50,7 @@ namespace Week10Day2.Core
         {
             return eroeRepo.FetchByUtente(u);
         }
-
+        #endregion
         #region Utente
         public Utente AccediUtente(string username, string password)
         {
@@ -66,8 +67,17 @@ namespace Week10Day2.Core
             return utenteRepo.Insert(user);
             
         }
+        #endregion
+        #region Mostro
+        public Mostro GetRandomMostro(int livello)
+        {
+            List<Mostro> mostri = mostroRepo.FetchByLivello(livello);
+            Random random = new Random();
+            int index = random.Next(mostri.Count);
+            Mostro mostro = mostri[index];
+            return mostro;
 
-      
+        }
 
         #endregion
     }

@@ -89,7 +89,7 @@ namespace Week10Day2
                 switch (scelta)
                 {
                     case "1":
-                        //Gioca(u);
+                        Gioca(u);
                         break;
                     case "2":
                         CreaEroe(u);
@@ -109,26 +109,99 @@ namespace Week10Day2
         }
         #region MENU-GIOCATORE
 
-        //pending GIOCA
         private static void Gioca(Utente u)
         {
-            List<Eroe> eroi = bl.FetchEroi(u);
-            int i = 1;
-            foreach (var e in eroi)
+            try
             {
-                Console.WriteLine($"{i} - {e.Print()}");
-                i++;
+                List<Eroe> eroi = bl.FetchEroi(u);
+                if (eroi.Count() != 0)
+                {
+                    int i = 1;
+                    foreach (var e in eroi)
+                    {
+                        Console.WriteLine($"{i} - {e.Print()}");
+                        i++;
+                    }
+                    int sceltaEroe;
+                    bool isInt;
+                    do
+                    {
+                        Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
+                        isInt = int.TryParse(Console.ReadLine(), out sceltaEroe);
+                    } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
+                    Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
+                    Mostro mostro = bl.GetRandomMostro(eroe.Livello);
+                    bool risultato = IniziaBattaglia(eroe, mostro);
+                    if (risultato)
+                    {
+                        Console.WriteLine("Hai vinto");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Hai perso!");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Non hai nessun eroe nell'account. Creane uno.");
+                }
             }
-            Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
-            int sceltaEroe = int.Parse(Console.ReadLine());
-            
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
+
+        private static bool IniziaBattaglia(Eroe eroe, Mostro mostro)
+        {
+            Console.WriteLine($"### {eroe.Nome.ToUpper()} vs {mostro.Nome.ToUpper()} ###");
+            Console.WriteLine("############# START! ################");
+            do
+            {
+                mostro.PuntiVita = TurnoEroe(eroe, mostro);
+                eroe.PuntiVita = TurnoMostro(eroe, mostro);
+            } while (eroe.PuntiVita > 0 || mostro.PuntiVita > 0);
+            if (eroe.PuntiVita <= 0 && mostro.PuntiVita > 0)
+            {
+                return false;
+            }
+            else return true;
+
+            }
+        private static int TurnoMostro(Eroe eroe, Mostro mostro)
+        {
+            eroe.PuntiVita -= mostro._Arma.puntiDanno;
+            return eroe.PuntiVita;
+        }
+
+        private static int TurnoEroe(Eroe eroe, Mostro mostro)
+        {
+            Console.WriteLine("1 - Attacca! ");
+            Console.WriteLine("2 - Tenta la fuga");
+            string scelta;
+            do
+            {
+                scelta = Console.ReadLine();
+            } while (scelta != "1" || scelta != "2");
+            switch (scelta)
+            {
+                case "1":
+                    mostro.PuntiVita -= eroe._Arma.puntiDanno;
+                    
+                    break;
+                case "2":
+                    //Fuga(eroe);
+                    break;
+            }
+            return mostro.PuntiVita;
+        }
+
         private static void EliminaEroe(Utente u)
         {
             try
             {   
                 List<Eroe> eroi = bl.FetchEroi(u);
-                if (eroi != null)
+                if (eroi.Count() != 0)
                 {
                     int i = 1;
                     foreach (var e in eroi)
