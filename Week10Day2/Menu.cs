@@ -41,7 +41,7 @@ namespace Week10Day2
                         u = Registrati();
                         break;
                     case "0":
-                        Console.WriteLine("Ciao alla prossima partita!");
+                        Console.WriteLine("Arrivederci!");
                         continuare = false;
                         break;
                     default:
@@ -49,9 +49,10 @@ namespace Week10Day2
                         break;
                 }
 
-                if (u != null)
+                if (u.Id != 0)
                 {
                     MenuGiocatore(u);
+                    
                 }
             } while (continuare);
         }
