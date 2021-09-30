@@ -52,7 +52,6 @@ namespace Week10Day2
                 if (u != null)
                 {
                     MenuGiocatore(u);
-                    continuare = false;
                 }
             } while (continuare);
         }
@@ -121,39 +120,62 @@ namespace Week10Day2
                 List<Eroe> eroi = bl.FetchEroi(u);
                 if (eroi.Count() != 0)
                 {
-                    int i = 1;
-                    foreach (var e in eroi)
-                    {
-                        Console.WriteLine($"{i} - {e.Print()}");
-                        i++;
-                    }
-                    int sceltaEroe;
-                    bool isInt;
                     do
                     {
-                        Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
-                        isInt = int.TryParse(Console.ReadLine(), out sceltaEroe);
-                        
-                    } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
-                    Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
-                    Mostro mostro = bl.GetRandomMostro(eroe.Livello);
-                    int eroePV = eroe.PuntiVita;
-                    int mostroPV = mostro.PuntiVita;
-                    bool risultato = IniziaBattaglia(eroe, mostro);
-                    eroe.PuntiVita = eroePV;
-                    mostro.PuntiVita = mostroPV;
-                    if (risultato)
-                    {
-                        Console.WriteLine("Hai vinto");
-                        eroe.PuntiAccumulati += mostro.Livello * 10;
+                        int i = 1;
+                        foreach (var e in eroi)
+                        {
+                            Console.WriteLine($"{i} - {e.Print()}");
+                            i++;
+                        }
+                        int sceltaEroe;
+                        bool isInt;
+                        do
+                        {
+                            Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
+                            isInt = int.TryParse(Console.ReadLine(), out sceltaEroe);
 
+                        } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
+                        Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
+                        //Mostro mostro = bl.GetRandomMostro(eroe.Livello);
+                        eroe.Livello = 5;
+                        Mostro mostro = bl.GetRandomMostro(eroe.Livello);
+                        int eroePV = eroe.PuntiVita;
+                        int mostroPV = mostro.PuntiVita;
+                        bool? fuga;
+                        bool? risultato = IniziaBattaglia(eroe, mostro, out fuga);
+                        eroe.PuntiVita = eroePV;
+                        mostro.PuntiVita = mostroPV;
+                        if (risultato == true) //caso vincita
+                        {
+                            Console.WriteLine("Hai vinto");
+                            eroe.PuntiAccumulati += mostro.Livello * 10;
+
+
+                        }
+                        else if (risultato == false) //caso perdita
+                        {
+                            Console.WriteLine("Hai perso!");
+                        }
+                        else //caso fuga
+                        {
+                            if (fuga == true)
+                            {
+                                Console.WriteLine("Bravo! Sei riuscito a fuggire dal mostro.");
+                                eroe.PuntiAccumulati -= mostro.Livello * 5;
+
+                            }
+                            else
+                            {
+                                Console.WriteLine("Tentativo di fuga fallito.");
+                                Console.WriteLine("Hai perso!");
+                            }
+                        }
+                        CheckLivello(eroe);
                         bl.UpdateEroe(eroe);
+                        Console.WriteLine("Vuoi continuare a giocare? Scrivi si per continuare");
+                    } while (Console.ReadLine().ToUpper() == "SI");
                     }
-                    else
-                    {
-                        Console.WriteLine("Hai perso!");
-                    }
-                }
                 else
                 {
                     Console.WriteLine("Non hai nessun eroe nell'account. Creane uno.");
@@ -165,39 +187,88 @@ namespace Week10Day2
             }
         }
 
-        private static bool IniziaBattaglia(Eroe eroe, Mostro mostro)
+        private static void CheckLivello(Eroe eroe)
         {
+            switch (eroe.Livello)
+            {
+                case 1:
+                    if (eroe.PuntiAccumulati > 29)
+                    {
+                        eroe.Livello++;
+                        eroe.PuntiAccumulati = 0;
+                        eroe.PuntiVita = 40;
+                    }
+                    break;
+                case 2:
+                    if (eroe.PuntiAccumulati > 59)
+                    {
+                        eroe.Livello++;
+                        eroe.PuntiAccumulati = 0;
+                        eroe.PuntiVita = 60;
+                    }
+                    break;
+                case 3:
+                    if(eroe.PuntiAccumulati> 89)
+                    {
+                        eroe.Livello++;
+                        eroe.PuntiAccumulati = 0;
+                        eroe.PuntiVita = 80;
+                    }
+                    break;
+                case 4:
+                    if (eroe.PuntiAccumulati > 119)
+                    {
+                        eroe.Livello++;
+                        eroe.PuntiAccumulati = 0;
+                        eroe.PuntiVita = 100;
+                    }
+                    break;
+                case 5:
+                    break;
+            }
+        }
+
+        private static bool? IniziaBattaglia(Eroe eroe, Mostro mostro, out bool? fuga)
+        {
+            fuga = null;
             Console.WriteLine($"### {eroe.Nome.ToUpper()} vs {mostro.Nome.ToUpper()} ###");
             Console.WriteLine("############# START! ################");
             
             
             do
             {
-                mostro.PuntiVita = TurnoEroe(eroe, mostro);
-                if(mostro.PuntiVita <= 0)
+                mostro.PuntiVita = TurnoEroe(eroe, mostro, out fuga);
+                if((mostro.PuntiVita <= 0 && fuga == null) || fuga != null)
                 {
                     break;
                 }
                 eroe.PuntiVita = TurnoMostro(eroe, mostro);
-            } while (eroe.PuntiVita > 0 || mostro.PuntiVita > 0);
-            if (eroe.PuntiVita <= 0 && mostro.PuntiVita > 0)
+            } while (eroe.PuntiVita > 0  && fuga == null);
+            if (fuga == null)
             {
-                return false;
+                if (eroe.PuntiVita <= 0 && mostro.PuntiVita > 0)
+                {
+                    return false;
+                }
+                else return true;
             }
-            else return true;
-
+            else
+            {
+                return null;
             }
+        }
         private static int TurnoMostro(Eroe eroe, Mostro mostro)
         {
             Console.WriteLine($"E' il turno di {mostro.Nome}");
             eroe.PuntiVita -= mostro._Arma.PuntiDanno;
-            Console.WriteLine($"Il mostro ti ha inflitto {eroe._Arma.PuntiDanno} danni");
-            Console.WriteLine($"Tu ha ora {mostro.PuntiVita} hp\n");
+            Console.WriteLine($"Il mostro ti ha inflitto {mostro._Arma.PuntiDanno} danni");
+            Console.WriteLine($"Tu ha ora {eroe.PuntiVita} hp\n");
             return eroe.PuntiVita;
         }
 
-        private static int TurnoEroe(Eroe eroe, Mostro mostro)
+        private static int TurnoEroe(Eroe eroe, Mostro mostro, out bool? fuga)
         {
+            fuga = null;
             Console.WriteLine("E' il tuo turno. Cosa vuoi fare?");
             Console.WriteLine("1 - Attacca! ");
             Console.WriteLine("2 - Tenta la fuga");
@@ -214,9 +285,10 @@ namespace Week10Day2
                     Console.WriteLine($"Il mostro ha ora {mostro.PuntiVita} hp\n");
                     break;
                 case "2":
-                    //Fuga(eroe);
+                    fuga = new Random().Next(100) % 2 == 0;
                     break;
             }
+
             return mostro.PuntiVita;
         }
 
