@@ -137,11 +137,16 @@ namespace Week10Day2
                     } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
                     Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
                     Mostro mostro = bl.GetRandomMostro(eroe.Livello);
+                    int eroePV = eroe.PuntiVita;
+                    int mostroPV = mostro.PuntiVita;
                     bool risultato = IniziaBattaglia(eroe, mostro);
+                    eroe.PuntiVita = eroePV;
+                    mostro.PuntiVita = mostroPV;
                     if (risultato)
                     {
                         Console.WriteLine("Hai vinto");
                         eroe.PuntiAccumulati += mostro.Livello * 10;
+
                         bl.UpdateEroe(eroe);
                     }
                     else
@@ -164,6 +169,8 @@ namespace Week10Day2
         {
             Console.WriteLine($"### {eroe.Nome.ToUpper()} vs {mostro.Nome.ToUpper()} ###");
             Console.WriteLine("############# START! ################");
+            
+            
             do
             {
                 mostro.PuntiVita = TurnoEroe(eroe, mostro);
