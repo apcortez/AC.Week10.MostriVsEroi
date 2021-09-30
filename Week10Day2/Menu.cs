@@ -229,7 +229,7 @@ namespace Week10Day2
                 if (eroi.Count() != 0)
                 {
                     do
-                    {
+                    { 
                         int i = 1;
                         foreach (var e in eroi)
                         {
@@ -266,18 +266,15 @@ namespace Week10Day2
                         }
                         else //caso fuga
                         {
-                            if (fuga == true)
-                            {
                                 Console.WriteLine("Bravo! Sei riuscito a fuggire dal mostro.");
-                                Console.WriteLine($"Punti accumulati : -{mostro.Livello * 5}");
-                                eroe.PuntiAccumulati -= mostro.Livello * 5;
-
-                            }
-                            else
+                            if ((eroe.PuntiAccumulati -= mostro.Livello * 5) >= 0)
                             {
-                                Console.WriteLine("Tentativo di fuga fallito.");
-                                Console.WriteLine("Hai perso!");
+                                eroe.PuntiAccumulati -= mostro.Livello * 5;
+                                Console.WriteLine($"Punti accumulati : -{mostro.Livello * 5}");
                             }
+
+
+
                         }
                         CheckLivello(eroe);
                         if(eroe.Livello>=3 && u.isAdmin == false)
@@ -353,9 +350,14 @@ namespace Week10Day2
             do
             {
                 mostro.PuntiVita = TurnoEroe(eroe, mostro, out fuga);
-                if((mostro.PuntiVita <= 0 && fuga == null) || fuga != null)
+                if((mostro.PuntiVita <= 0 && fuga == null) || fuga == true)
                 {
                     break;
+                }
+                if(fuga == false)
+                {
+                    Console.WriteLine("Tentativo di fuga fallito.");
+                    fuga = null;
                 }
                 eroe.PuntiVita = TurnoMostro(eroe, mostro);
             } while (eroe.PuntiVita > 0  && fuga == null);
