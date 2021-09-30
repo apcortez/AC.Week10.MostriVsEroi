@@ -89,6 +89,7 @@ namespace Week10Day2
                 Console.WriteLine();
                 Console.WriteLine("Quale operazione vuoi scegliere?");
                 string scelta = Console.ReadLine();
+                Console.WriteLine();
                 switch (scelta)
                 {
                     case "1":
@@ -132,6 +133,7 @@ namespace Week10Day2
                     {
                         Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
                         isInt = int.TryParse(Console.ReadLine(), out sceltaEroe);
+                        
                     } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
                     Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
                     Mostro mostro = bl.GetRandomMostro(eroe.Livello);
@@ -181,8 +183,8 @@ namespace Week10Day2
         private static int TurnoMostro(Eroe eroe, Mostro mostro)
         {
             Console.WriteLine($"E' il turno di {mostro.Nome}");
-            eroe.PuntiVita -= mostro._Arma.puntiDanno;
-            Console.WriteLine($"Il mostro ti ha inflitto {eroe._Arma.puntiDanno} danni");
+            eroe.PuntiVita -= mostro._Arma.PuntiDanno;
+            Console.WriteLine($"Il mostro ti ha inflitto {eroe._Arma.PuntiDanno} danni");
             Console.WriteLine($"Tu ha ora {mostro.PuntiVita} hp\n");
             return eroe.PuntiVita;
         }
@@ -200,8 +202,8 @@ namespace Week10Day2
             switch (scelta)
             {
                 case "1":
-                    mostro.PuntiVita -= eroe._Arma.puntiDanno;
-                    Console.WriteLine($"Hai inflitto al mostro {eroe._Arma.puntiDanno} danni");
+                    mostro.PuntiVita -= eroe._Arma.PuntiDanno;
+                    Console.WriteLine($"Hai inflitto al mostro {eroe._Arma.PuntiDanno} danni");
                     Console.WriteLine($"Il mostro ha ora {mostro.PuntiVita} hp\n");
                     break;
                 case "2":
