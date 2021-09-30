@@ -48,11 +48,12 @@ namespace Week10Day2
                         Console.WriteLine("Scelta sbagliata riprova");
                         break;
                 }
+                if (u != null)
+                {       if (u.Id != 0)
+                    {
+                        MenuGiocatore(u);
 
-                if (u.Id != 0)
-                {
-                    MenuGiocatore(u);
-                    
+                    }
                 }
             } while (continuare);
         }
