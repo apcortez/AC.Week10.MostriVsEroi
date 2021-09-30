@@ -12,5 +12,6 @@ namespace Week10Day2.Core.Interfaces
         List<Eroe> FetchByUtente(Utente u);
         string Delete(Eroe eroe);
         void Update(Eroe eroe);
+        List<Eroe> FetchTop10();
     }
 }

@@ -61,14 +61,118 @@ namespace Week10Day2
         {
             if (u.isAdmin)
             {
-                //MenuAdmin(u);
+                MenuAdmin(u);
             }
             else
             {
                 MenuNonAdmin(u);
+                if (u.isAdmin)
+                {
+                    MenuAdmin(u);
+                }
             }
         }
         #endregion
+
+        #region MENU ADMIN
+        private static void MenuAdmin(Utente u)
+        {
+            bool continuare = true;
+
+            do
+            {
+                Console.WriteLine();
+                Console.WriteLine("########## MENU GIOCATORE ADMIN #############");
+                Console.WriteLine("Selezionare un operazione da eseguire:");
+                Console.WriteLine("1 - Gioca");
+                Console.WriteLine("2 - Crea nuovo eroe");
+                Console.WriteLine("3 - Elimina eroe");
+                Console.WriteLine("4 - Crea un nuovo mostro");
+                Console.WriteLine("5 - Mostra classifica globale");
+                Console.WriteLine("0 - Esci");
+                Console.WriteLine("#############################################");
+
+                Console.WriteLine();
+                Console.WriteLine("Quale operazione vuoi scegliere?");
+                string scelta = Console.ReadLine();
+                Console.WriteLine();
+                switch (scelta)
+                {
+                    case "1":
+                        Gioca(u);
+                        break;
+                    case "2":
+                        CreaEroe(u);
+                        break;
+                    case "3":
+                        EliminaEroe(u);
+                        break;
+                    case "4":
+                        CreaMostro();
+                        break;
+                    case "5":
+                        MostraClassifica();
+                        break;
+                    case "0":
+                        Console.WriteLine("Ciao alla prossima partita!");
+                        continuare = false;
+                        break;
+                    default:
+                        Console.WriteLine("Scelta sbagliata riprova");
+                        break;
+                }
+            } while (continuare);
+        }
+
+        private static void MostraClassifica()
+        {
+            Console.WriteLine("########### CLASSIFICA ###############");
+            List<Eroe> eroi = bl.FetchClassica();
+            List<Utente> utenti = bl.FetchUtenti(eroi);
+            int i = 1;
+            foreach(var e in eroi)
+            {
+                Utente utente = utenti.Where(u => u.Id == e.IdGiocatore).FirstOrDefault();
+                Console.WriteLine($"{i}) {e.Nome} - LVL: {e.Livello} - Punti: {e.PuntiAccumulati} - Giocatore: {utente.Username}");
+                i++;
+            }
+        }
+        #endregion
+        #region MENU ADMIN METODI
+        private static void CreaMostro()
+        {
+            try
+            {
+                Mostro nuovoMostro = new Mostro();
+                nuovoMostro.Nome = InserisciNome();
+                nuovoMostro._Categoria = InserisciCategoria("Mostro");
+                nuovoMostro._Arma = InserisciArma(nuovoMostro._Categoria);
+                nuovoMostro.Livello = InserisciLivello();
+                if (bl.InsertMostro(nuovoMostro).Id != 0)
+                {
+                    Console.WriteLine($"Il mostro {nuovoMostro.Nome} è stato inserito correttamente");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static int InserisciLivello()
+        {
+            int livelloScelto;
+            bool isInt;
+            do
+            {
+                Console.WriteLine("Inserisci il livello del mostro tra 1 e 5: ");
+                isInt = int.TryParse(Console.ReadLine(), out livelloScelto);
+            } while (!isInt || livelloScelto>5 || livelloScelto <= 0);
+            return livelloScelto;
+        }
+
+        #endregion
+
         #region MENU NORMALE
         private static void MenuNonAdmin(Utente u)
         {
@@ -93,6 +197,8 @@ namespace Week10Day2
                 {
                     case "1":
                         Gioca(u);
+                        if (u.isAdmin)
+                        { continuare = false; }
                         break;
                     case "2":
                         CreaEroe(u);
@@ -137,8 +243,6 @@ namespace Week10Day2
 
                         } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
                         Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
-                        //Mostro mostro = bl.GetRandomMostro(eroe.Livello);
-                        eroe.Livello = 5;
                         Mostro mostro = bl.GetRandomMostro(eroe.Livello);
                         int eroePV = eroe.PuntiVita;
                         int mostroPV = mostro.PuntiVita;
@@ -150,6 +254,7 @@ namespace Week10Day2
                         {
                             Console.WriteLine("Hai vinto");
                             eroe.PuntiAccumulati += mostro.Livello * 10;
+                            Console.WriteLine($"Punti accumulati: +{mostro.Livello * 10}");
 
 
                         }
@@ -162,6 +267,7 @@ namespace Week10Day2
                             if (fuga == true)
                             {
                                 Console.WriteLine("Bravo! Sei riuscito a fuggire dal mostro.");
+                                Console.WriteLine($"Punti accumulati : -{mostro.Livello * 5}");
                                 eroe.PuntiAccumulati -= mostro.Livello * 5;
 
                             }
@@ -172,6 +278,11 @@ namespace Week10Day2
                             }
                         }
                         CheckLivello(eroe);
+                        if(eroe.Livello>=3 && u.isAdmin == false)
+                        {
+                            u.isAdmin = true;
+                            break;
+                        }
                         bl.UpdateEroe(eroe);
                         Console.WriteLine("Vuoi continuare a giocare? Scrivi si per continuare");
                     } while (Console.ReadLine().ToUpper() == "SI");
@@ -197,6 +308,7 @@ namespace Week10Day2
                         eroe.Livello++;
                         eroe.PuntiAccumulati = 0;
                         eroe.PuntiVita = 40;
+
                     }
                     break;
                 case 2:
@@ -213,6 +325,7 @@ namespace Week10Day2
                         eroe.Livello++;
                         eroe.PuntiAccumulati = 0;
                         eroe.PuntiVita = 80;
+                        
                     }
                     break;
                 case 4:
@@ -261,8 +374,12 @@ namespace Week10Day2
         {
             Console.WriteLine($"E' il turno di {mostro.Nome}");
             eroe.PuntiVita -= mostro._Arma.PuntiDanno;
+
             Console.WriteLine($"Il mostro ti ha inflitto {mostro._Arma.PuntiDanno} danni");
-            Console.WriteLine($"Tu ha ora {eroe.PuntiVita} hp\n");
+            if (eroe.PuntiVita >= 0)
+                { Console.WriteLine($"Tu ha ora {eroe.PuntiVita} hp\n"); }
+            else
+                { Console.WriteLine("Tu ha ora 0 hp\n"); }
             return eroe.PuntiVita;
         }
 
@@ -280,9 +397,16 @@ namespace Week10Day2
             switch (scelta)
             {
                 case "1":
-                    mostro.PuntiVita -= eroe._Arma.PuntiDanno;
                     Console.WriteLine($"Hai inflitto al mostro {eroe._Arma.PuntiDanno} danni");
-                    Console.WriteLine($"Il mostro ha ora {mostro.PuntiVita} hp\n");
+                    mostro.PuntiVita -= eroe._Arma.PuntiDanno;
+                    if (mostro.PuntiVita >= 0)
+                    {
+                        Console.WriteLine($"Il mostro ha ora {mostro.PuntiVita} hp\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Il mostro ha ora 0 hp\n");
+                    }
                     break;
                 case "2":
                     fuga = new Random().Next(100) % 2 == 0;
@@ -332,7 +456,7 @@ namespace Week10Day2
             {
                 Eroe nuovoEroe = new Eroe();
                 nuovoEroe.Nome = InserisciNome();
-                nuovoEroe._Categoria = InserisciCategoria();
+                nuovoEroe._Categoria = InserisciCategoria("Eroe");
                 nuovoEroe._Arma = InserisciArma(nuovoEroe._Categoria);
                 nuovoEroe.IdGiocatore = u.Id;
                 if (bl.InsertEroe(nuovoEroe).Id != 0)
@@ -367,10 +491,10 @@ namespace Week10Day2
             return arma;
         }
 
-        private static Categoria InserisciCategoria()
+        private static Categoria InserisciCategoria(string discriminator)
         {
 
-            List<Categoria> categorie = bl.FetchCategoria("Eroe");
+            List<Categoria> categorie = bl.FetchCategoria(discriminator);
             int i = 1;
             foreach(var c in categorie)
             {
@@ -393,7 +517,7 @@ namespace Week10Day2
             string nome = String.Empty;
             do
             {
-                Console.WriteLine("Inserisci nome eroe: ");
+                Console.WriteLine("Inserisci nome: ");
                 nome = Console.ReadLine();
 
             } while (String.IsNullOrEmpty(nome));

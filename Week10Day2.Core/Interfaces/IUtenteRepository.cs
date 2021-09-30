@@ -11,5 +11,6 @@ namespace Week10Day2.Core.Interfaces
     {
         Utente GetByUsername(string username);
         Utente GetByUserPass(string username, string password);
+        List<Utente> FetchByEroi(List<Eroe> eroi);
     }
 }

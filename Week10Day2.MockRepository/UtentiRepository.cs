@@ -10,7 +10,25 @@ namespace Week10Day2.MockRepository
 {
     public class UtentiRepository : IUtenteRepository
     {
-        public static List<Utente> utenti = new List<Utente>();
+        public static List<Utente> utenti = new List<Utente>()
+        {
+            new Utente{ Id = 1, Username = "pippo", Password = "pw1", isAdmin = true},
+            new Utente{ Id = 2, Username = "pluto", Password = "pw2", isAdmin = false},
+            new Utente{ Id = 3, Username = "paperino", Password = "pw3", isAdmin = true},
+        };
+
+        public List<Utente> FetchByEroi(List<Eroe> eroi)
+        {
+            
+            List<Utente> utentiEroi = new List<Utente>();
+            foreach(var e in eroi)
+            {
+                Utente utente = utenti.Where(u => u.Id == e.IdGiocatore).FirstOrDefault();
+                utentiEroi.Add(utente);
+            }
+            return utentiEroi;
+        }
+
         public Utente GetByUsername(string username)
         {
             return utenti.Where(u => u.Username == username).FirstOrDefault();

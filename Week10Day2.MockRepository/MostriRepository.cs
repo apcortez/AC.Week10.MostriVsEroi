@@ -8,8 +8,8 @@ namespace Week10Day2.MockRepository
 {
     public class MostriRepository : IMostroRepository
     {
-        public static List<Mostro> mostri = new List<Mostro>() 
-        { 
+        public static List<Mostro> mostri = new List<Mostro>()
+        {
             new Mostro{Id = 1, Nome = "Shrek", Livello = 1, PuntiVita = 20, _Arma = new Arma{Id = 17, Nome = "Spada rotta", PuntiDanno = 3, IdCategoria = 4}, _Categoria = new Categoria{Id = 4, Nome ="Orco", Discriminatore = "Mostro"} },
             new Mostro{Id = 2, Nome = "Cult", Livello = 1, PuntiVita = 20, _Arma = new Arma{Id = 12, Nome = "Farneticazione", PuntiDanno = 7, IdCategoria = 3}, _Categoria = new Categoria{Id = 3, Nome ="Cultista", Discriminatore = "Mostro"}},
             new Mostro{Id = 3, Nome = "Shrek2", Livello = 3, PuntiVita = 60, _Arma = new Arma{Id = 18, Nome = "Mazza chiodata", PuntiDanno = 10, IdCategoria = 4}, _Categoria = new Categoria{Id = 4, Nome ="Orco", Discriminatore = "Mostro"}},
@@ -23,9 +23,18 @@ namespace Week10Day2.MockRepository
             return mostri.Where(m => m.Livello <= livello).ToList();
         }
 
-        public Mostro Insert(Mostro item)
+        public Mostro Insert(Mostro m)
         {
-            throw new NotImplementedException();
+            if (mostri.Count() == 0)
+            {
+                m.Id = 1;
+            }
+            else
+            {
+                m.Id = mostri.Max(i => i.Id) + 1;
+            }
+            mostri.Add(m);
+            return m;
         }
     }
 }

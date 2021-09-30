@@ -13,6 +13,7 @@ namespace Week10Day2.Core
         Utente GetUtente(string username);
         Utente AccediUtente(string username, string password);
         Utente InsertUser(Utente user);
+        List<Utente> FetchUtenti(List<Eroe> eroi);
         #endregion
 
         #region IEroi
@@ -22,9 +23,12 @@ namespace Week10Day2.Core
         List<Arma> FetchArma(Categoria categoria);
         string EliminaEroe(Eroe eroe);
         void UpdateEroe(Eroe eroe);
+        List<Eroe> FetchClassica();
+
         #endregion
         #region IMostri
         Mostro GetRandomMostro(int livello);
+        Mostro InsertMostro(Mostro nuovoMostro);
         
 
         #endregion

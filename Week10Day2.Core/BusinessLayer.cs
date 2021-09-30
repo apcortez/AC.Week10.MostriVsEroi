@@ -55,8 +55,20 @@ namespace Week10Day2.Core
         {
             return eroeRepo.FetchByUtente(u);
         }
+        public List<Eroe> FetchClassica()
+        {
+            return eroeRepo.FetchTop10();
+        }
+
+
         #endregion
         #region Utente
+
+        public List<Utente> FetchUtenti(List<Eroe> eroi)
+        {
+            return utenteRepo.FetchByEroi(eroi);
+        }
+
         public Utente AccediUtente(string username, string password)
         {
             return utenteRepo.GetByUserPass(username, password);
@@ -84,7 +96,21 @@ namespace Week10Day2.Core
 
         }
 
-      
+        public Mostro InsertMostro(Mostro nuovoMostro)
+        {
+            switch (nuovoMostro.Livello)
+            {
+                case 1: nuovoMostro.PuntiVita = 20; break;
+                case 2: nuovoMostro.PuntiVita = 40; break;
+                case 3: nuovoMostro.PuntiVita = 60; break;
+                case 4: nuovoMostro.PuntiVita = 80; break;
+                case 5: nuovoMostro.PuntiVita = 100; break;
+            }
+            return mostroRepo.Insert(nuovoMostro);
+        }
+
+
+
         #endregion
     }
 }
