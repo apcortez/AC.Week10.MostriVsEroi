@@ -179,6 +179,7 @@ namespace Week10Day2
         private static void MenuNonAdmin(Utente u)
         {
             bool continuare = true;
+            
 
             do
             {
@@ -218,33 +219,86 @@ namespace Week10Day2
                 }
             } while (continuare);
         }
-        #endregion
 
-        #region MENU NORMALE METODI
         private static void Gioca(Utente u)
+        {
+            Eroe eroe = new Eroe();
+            bool continuare;
+            do
+            {
+                if (eroe != null)
+                {
+                    if (eroe.Id == 0)
+                    {
+
+                        eroe = Pregioca(u, eroe);
+                    }
+                }
+                
+                Eroe eroeScelto = Gioca(u, eroe);
+                Console.WriteLine("Vuoi continuare a giocare? Scrivi si per continuare");
+                string risposta = Console.ReadLine().ToUpper();
+                if (risposta == "SI")
+                {
+                    continuare = true;
+                    Console.WriteLine("Vuoi continuare con lo stesso eroe? Scrivi si/no");
+                    string sameEroe = Console.ReadLine().ToUpper();
+                    if (sameEroe == "SI")
+                    {
+                        eroe = eroeScelto;
+                    }
+                    else
+                    {
+                        eroe = new Eroe();
+                    }
+                }
+                else
+                    continuare = false;
+            } while (continuare);
+        }
+
+        private static Eroe Pregioca(Utente u, Eroe eroe)
         {
             try
             {
                 List<Eroe> eroi = bl.FetchEroi(u);
                 if (eroi.Count() != 0)
                 {
-                    do
-                    { 
-                        int i = 1;
-                        foreach (var e in eroi)
-                        {
-                            Console.WriteLine($"{i} - {e.Print()}");
-                            i++;
-                        }
-                        int sceltaEroe;
-                        bool isInt;
-                        do
-                        {
-                            Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
-                            isInt = int.TryParse(Console.ReadLine(), out sceltaEroe);
 
-                        } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
-                        Eroe eroe = eroi.ElementAt(sceltaEroe - 1);
+                    int i = 1;
+                    foreach (var e in eroi)
+                    {
+                        Console.WriteLine($"{i} - {e.Print()}");
+                        i++;
+                    }
+                    int sceltaEroe;
+                    bool isInt;
+                    do
+                    {
+                        Console.WriteLine("Quale eroe vuoi scegliere? Inserisci il numero.");
+                        isInt = int.TryParse(Console.ReadLine(), out sceltaEroe);
+
+                    } while (!isInt || sceltaEroe > eroi.Count() || sceltaEroe <= 0);
+                    eroe = eroi.ElementAt(sceltaEroe - 1);
+                    return eroe;
+                }
+                else
+                {
+                    Console.WriteLine("Non hai nessun eroe nell'account. Creane uno.");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+            #endregion
+
+            #region MENU NORMALE METODI
+            private static Eroe Gioca(Utente u, Eroe eroe)
+            {
+            
                         Mostro mostro = bl.GetRandomMostro(eroe.Livello);
                         int eroePV = eroe.PuntiVita;
                         int mostroPV = mostro.PuntiVita;
@@ -257,8 +311,6 @@ namespace Week10Day2
                             Console.WriteLine("Hai vinto");
                             eroe.PuntiAccumulati += mostro.Livello * 10;
                             Console.WriteLine($"Punti accumulati: +{mostro.Livello * 10}");
-
-
                         }
                         else if (risultato == false) //caso perdita
                         {
@@ -273,28 +325,20 @@ namespace Week10Day2
                                 Console.WriteLine($"Punti accumulati : -{mostro.Livello * 5}");
                             }
 
-
-
                         }
                         CheckLivello(eroe);
                         if(eroe.Livello>=3 && u.isAdmin == false)
                         {
                             u.isAdmin = true;
-                            break;
+                      
                         }
                         bl.UpdateEroe(eroe);
-                        Console.WriteLine("Vuoi continuare a giocare? Scrivi si per continuare");
-                    } while (Console.ReadLine().ToUpper() == "SI");
-                    }
-                else
-                {
-                    Console.WriteLine("Non hai nessun eroe nell'account. Creane uno.");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+            return eroe;
+           
+        
+        
+        
         }
 
         private static void CheckLivello(Eroe eroe)
