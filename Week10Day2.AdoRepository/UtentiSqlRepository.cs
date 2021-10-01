@@ -91,7 +91,7 @@ namespace Week10Day2.AdoRepository
                     SqlCommand command = new SqlCommand();
                     command.Connection = connection;
                     command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = "select * from Utente where Username = @user, Password = @pass";
+                    command.CommandText = "select * from Utente where Username = @user and Password = @pass";
                     command.Parameters.AddWithValue("@user", username);
                     command.Parameters.AddWithValue("@pass", password);
 

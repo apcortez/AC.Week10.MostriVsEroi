@@ -26,9 +26,9 @@ namespace Week10Day2.AdoRepository
                 command.Connection = connection;
                 command.CommandType = System.Data.CommandType.Text;
                 command.CommandText = "select Personaggio.*, Arma.Nome as NomeArma, Arma.PuntiDanno, Categoria.Nome as NomeCategoria, Categoria.Discriminator " +
-                                      "from Personaggio join Categoria on Categoria.Id = Personaggio.Id " +
+                                      "from Personaggio join Categoria on Categoria.Id = Personaggio.IdCategoria " +
                                       "join Arma on Arma.Id = Personaggio.IdArma " +
-                                      "where Personaggio.Livello <= @lvl";
+                                      "where Personaggio.Livello <= @lvl and Categoria.Discriminator ='Mostro'";
                 command.Parameters.AddWithValue("@lvl", livello);
 
                 SqlDataReader reader = command.ExecuteReader();

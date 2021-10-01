@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Week10Day2.AdoRepository\Week10Day2.AdoRepository.csproj" />
     <ProjectReference Include="..\Week10Day2.Core\Week10Day2.Core.csproj" />
     <ProjectReference Include="..\Week10Day2.MockRepository\Week10Day2.MockRepository.csproj" />
   </ItemGroup>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Week10Day2.AdoRepository;
 using Week10Day2.Core;
 using Week10Day2.Core.Entities;
 using Week10Day2.MockRepository;
@@ -13,6 +14,10 @@ namespace Week10Day2
     {
         private static readonly IBusinessLayer bl = new BusinessLayer(new UtentiRepository(), new EroiRepository(),
                                                                        new MostriRepository(), new CategoriaRepository(), new ArmaRepository());
+
+        //ADORepository
+        //private static readonly IBusinessLayer bl = new BusinessLayer(new UtentiSqlRepository(), new EroiSqlRepository(),
+        //                                                               new MostriSqlRepository(), new CategoriaSqlRepository(), new ArmaSqlRepository());
         #region MENU PRINCIPALE
         internal static void Start()
         {
@@ -230,9 +235,13 @@ namespace Week10Day2
                 {
                     if (eroe.Id == 0)
                     {
-
+                        
                         eroe = Pregioca(u, eroe);
-                    }
+                        if(eroe == null)
+                        {
+                            eroe = CreaEroe(u);
+                        }
+                }
                 }
                 
                 Eroe eroeScelto = Gioca(u, eroe);
@@ -245,7 +254,7 @@ namespace Week10Day2
                     string sameEroe = Console.ReadLine().ToUpper();
                     if (sameEroe == "SI")
                     {
-                        eroe = eroeScelto;
+                            eroe = eroeScelto;
                     }
                     else
                     {
@@ -318,8 +327,9 @@ namespace Week10Day2
                         }
                         else //caso fuga
                         {
+                            int punti = eroe.PuntiAccumulati;
                                 Console.WriteLine("Bravo! Sei riuscito a fuggire dal mostro.");
-                            if ((eroe.PuntiAccumulati -= mostro.Livello * 5) >= 0)
+                            if ((punti -= mostro.Livello * 5) >= 0)
                             {
                                 eroe.PuntiAccumulati -= mostro.Livello * 5;
                                 Console.WriteLine($"Punti accumulati : -{mostro.Livello * 5}");
@@ -498,19 +508,19 @@ namespace Week10Day2
             }
         }
 
-        private static void CreaEroe(Utente u)
+        private static Eroe CreaEroe(Utente u)
         {
             try
             {
                 Eroe nuovoEroe = new Eroe();
                 nuovoEroe.Nome = InserisciNome();
                 nuovoEroe._Categoria = InserisciCategoria("Eroe");
+                nuovoEroe.Livello = 1;
                 nuovoEroe._Arma = InserisciArma(nuovoEroe._Categoria);
                 nuovoEroe.IdGiocatore = u.Id;
-                if (bl.InsertEroe(nuovoEroe).Id != 0)
-                {
-                    Console.WriteLine($"L'eroe {nuovoEroe.Nome} è stato inserito correttamente");
-                }
+                nuovoEroe = bl.InsertEroe(nuovoEroe);
+                Console.WriteLine($"L'eroe {nuovoEroe.Nome} è stato inserito correttamente");
+                return nuovoEroe;
             }catch(Exception ex)
             {
                 throw ex;
@@ -588,7 +598,11 @@ namespace Week10Day2
                     username = InserisciUsername();
                     password = InserisciPassword();
                     user = bl.GetUtente(username);
-                } while (user != null);
+                    if(user == null)
+                    {
+                        user = new Utente();
+                    }
+                } while (user.Id != 0);
                 user = new Utente(username, password);
                 if (bl.InsertUser(user) != null)
                 {
@@ -612,7 +626,13 @@ namespace Week10Day2
             Utente user = bl.AccediUtente(username, password);
             if (user != null)
             {
-                return user;
+                if (user.Id != 0)
+                    return user;
+                else
+                {
+                    Console.WriteLine("Username o password non validi");
+                    return null;
+                }
             }
             else
             {

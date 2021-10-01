@@ -45,7 +45,7 @@ namespace Week10Day2.AdoRepository
                 command.CommandType = System.Data.CommandType.Text;
                 command.CommandText = "select Personaggio.*, Arma.Nome as NomeArma, Arma.PuntiDanno, Categoria.Nome as NomeCategoria, Categoria.Discriminator " +
                                       "from Personaggio join Utente on Personaggio.IdGiocatore = Utente.Id " +
-                                      "join Categoria on Categoria.Id = Personaggio.Id " +
+                                      "join Categoria on Categoria.Id = Personaggio.IdCategoria " +
                                       "join Arma on Arma.Id = Personaggio.IdArma "+
                                       "where Utente.Id = @user";
                 command.Parameters.AddWithValue("@user", u.Id);
